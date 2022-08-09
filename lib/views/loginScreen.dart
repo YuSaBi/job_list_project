@@ -1,5 +1,41 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+//import 'package:job_list_project/models/userLoginRequest.dart';
 import '../decorations/textFieldClass.dart';
+//import '../models/userLogin.dart';
+//import '../models/userLoginResponse.dart';
+import '../models/userLoginM.dart';
+
+// future post method
+Future<UserLoginModelM> userLogin(String name, String password) async {
+  final response = await http.post(
+    Uri.parse('http://192.168.24.172:8082/api/Default/UserLogin_Manager',),// 10.0.2.2   localhost  Mert : 192.168.177.172  Test_UserLogin
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'username': name,
+      'userpassword': password,
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    // If the server did return a 201 CREATED response,
+    // then parse the JSON.
+     
+
+    print("Body'miz bu şekilde: "+response.body);
+    print(UserLoginModelM.fromJson(jsonDecode(response.body)));
+    return UserLoginModelM.fromJson(jsonDecode(response.body));
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+    print("net hatası olabilir");
+    throw Exception('net hatası olabilir.');
+  }
+}
+
 
 /// MAIN CLASS ///
 class loginScreen extends StatefulWidget {
@@ -11,6 +47,9 @@ class loginScreen extends StatefulWidget {
 
 /// MAIN STATE ///
 class _loginScreenState extends State<loginScreen> {
+  final TextEditingController _usernameController=new TextEditingController();
+  final TextEditingController _passwordController=new TextEditingController();
+  Future<UserLoginModelM>? _futureUserLogin;
   String username = "";
   String password = "";
   final _formKey = GlobalKey<FormState>();
@@ -28,7 +67,7 @@ class _loginScreenState extends State<loginScreen> {
       body: buildBody(),
     );
   }
-
+  
   buildBody() {
     return Form(
       // key verilecek
@@ -51,6 +90,7 @@ class _loginScreenState extends State<loginScreen> {
   buildUsernameField() {
     return TextFormField(
       autovalidateMode: AutovalidateMode.onUserInteraction,
+      controller: _usernameController,
       decoration: textDecoration().usernameFieldDecoration(),
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -72,6 +112,7 @@ class _loginScreenState extends State<loginScreen> {
       obscureText: true,
       enableSuggestions: false,
       autocorrect: false,
+      controller: _passwordController,
       decoration: textDecoration().passwordFieldDecoration(),
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -86,8 +127,8 @@ class _loginScreenState extends State<loginScreen> {
     );
   }
   
-  TextEditingController usernameController=new TextEditingController();
-  TextEditingController passwordController=new TextEditingController();
+  //TextEditingController usernameController=new TextEditingController();
+  //TextEditingController passwordController=new TextEditingController();
 
   buildLoginButton() {
     return Container(
@@ -100,7 +141,10 @@ class _loginScreenState extends State<loginScreen> {
           setState(() {
             _isLoading = true;
           });
-          //login(usernameController.text,passwordController.text);
+          _futureUserLogin = userLogin(_usernameController.text,_passwordController.text);//userLogin(_usernameController.text,_passwordController.text)
+          print("Öncesi");
+          print("Bu oldu => "+_futureUserLogin.toString());
+          print("Sonrası");
         },
         color: Colors.teal,
         shape:  RoundedRectangleBorder(
@@ -110,5 +154,29 @@ class _loginScreenState extends State<loginScreen> {
       ),
     );
   }
+  /*
+  Future<UserLoginResponseModel> login(String username, String userpassword) async{
+    final response = await http.post(
+    Uri.parse('https://localhost:8082/api/Default/userLogin_Manager'),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'username': username,
+      'userpassword': userpassword,
+    }),
+  );
+
+  if (response.statusCode == 201) {
+    // If the server did return a 201 CREATED response,
+    // then parse the JSON.
+    return UserLoginResponseModel.fromJson(jsonDecode(response.body));
+  } else {
+    // If the server did not return a 201 CREATED response,
+    // then throw an exception.
+    throw Exception('Failed to create album.');
+  }
+  }
+  */
 
 }
