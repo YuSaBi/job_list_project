@@ -1,3 +1,4 @@
+/*
 // To parse this JSON data, do
 //
 //     final userLoginModelM = userLoginModelMFromJson(jsonString);
@@ -31,3 +32,4 @@ class UserLoginModelM {
         "responseMsg": responseMsg,
     };
 }
+*/

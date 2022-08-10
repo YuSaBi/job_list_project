@@ -1,16 +1,20 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+//import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
+//import 'package:job_list_project/models/userLogin.dart';
 //import 'package:job_list_project/models/userLoginRequest.dart';
 import '../decorations/textFieldClass.dart';
 //import '../models/userLogin.dart';
-//import '../models/userLoginResponse.dart';
-import '../models/userLoginM.dart';
+import '../models/userLoginResponse.dart';
+//import '../models/userLoginM.dart';
 
 // future post method
-Future<UserLoginModelM> userLogin(String name, String password) async {
+Future<LoginResponseModel> userLogin(String name, String password) async {
+  //var jsonData;
+  //SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   final response = await http.post(
-    Uri.parse('http://192.168.24.172:8082/api/Default/UserLogin_Manager',),// 10.0.2.2   localhost  Mert : 192.168.177.172  Test_UserLogin
+    Uri.parse('http://192.168.2.172:8080/api/Default/UserLogin_Manager'),// 10.0.2.2   localhost  Mert : 192.168.177.172  Test_UserLogin
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
@@ -21,18 +25,22 @@ Future<UserLoginModelM> userLogin(String name, String password) async {
   );
 
   if (response.statusCode == 200) {
-    // If the server did return a 201 CREATED response,
-    // then parse the JSON.
-     
-
     print("Body'miz bu şekilde: "+response.body);
-    print(UserLoginModelM.fromJson(jsonDecode(response.body)));
-    return UserLoginModelM.fromJson(jsonDecode(response.body));
+    //jsonData = json.decode(response.body);
+    return LoginResponseModel.fromJson(jsonDecode(response.body));
+    /*
+    if (jsonData['UserID']==null) {
+      print("HATA: !!! UserID boş geldi :( ");
+    } else if(jsonData['UserID']==0){
+      print("Kullanıcı adı veya şifre hatalı.");
+    } else{
+      sharedPreferences.setString("UserID", jsonData['UserID']);
+    }
+    */
+    
   } else {
-    // If the server did not return a 201 CREATED response,
-    // then throw an exception.
     print("net hatası olabilir");
-    throw Exception('net hatası olabilir.');
+    throw Exception('net hatası olabilir. ${response.body}');
   }
 }
 
@@ -49,7 +57,7 @@ class loginScreen extends StatefulWidget {
 class _loginScreenState extends State<loginScreen> {
   final TextEditingController _usernameController=new TextEditingController();
   final TextEditingController _passwordController=new TextEditingController();
-  Future<UserLoginModelM>? _futureUserLogin;
+  Future<LoginResponseModel>? _futureUserLogin;
   String username = "";
   String password = "";
   final _formKey = GlobalKey<FormState>();
@@ -73,17 +81,21 @@ class _loginScreenState extends State<loginScreen> {
       // key verilecek
       child: Padding(
         padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            buildUsernameField(),
-            const SizedBox(height: 10.0,),
-            buildPasswordField(),
-            SizedBox(height: 30.0,),
-            buildLoginButton(),
-          ],
-        ),
+        child: (_futureUserLogin == null) ? buildColumn() : buildFutureBuilder()
       ),
+    );
+  }
+
+  buildColumn() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        buildUsernameField(),
+        const SizedBox(height: 10.0,),
+        buildPasswordField(),
+        SizedBox(height: 30.0,),
+        buildLoginButton(),
+      ],
     );
   }
 
@@ -105,7 +117,6 @@ class _loginScreenState extends State<loginScreen> {
     );
   }
   
-
   buildPasswordField() {
     return TextFormField(
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -127,9 +138,6 @@ class _loginScreenState extends State<loginScreen> {
     );
   }
   
-  //TextEditingController usernameController=new TextEditingController();
-  //TextEditingController passwordController=new TextEditingController();
-
   buildLoginButton() {
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -142,9 +150,6 @@ class _loginScreenState extends State<loginScreen> {
             _isLoading = true;
           });
           _futureUserLogin = userLogin(_usernameController.text,_passwordController.text);//userLogin(_usernameController.text,_passwordController.text)
-          print("Öncesi");
-          print("Bu oldu => "+_futureUserLogin.toString());
-          print("Sonrası");
         },
         color: Colors.teal,
         shape:  RoundedRectangleBorder(
@@ -154,6 +159,30 @@ class _loginScreenState extends State<loginScreen> {
       ),
     );
   }
+  
+  FutureBuilder<LoginResponseModel> buildFutureBuilder() {
+    return FutureBuilder<LoginResponseModel>(
+      future: _futureUserLogin,
+      builder: (context, snapshot) {
+        if(snapshot.hasData){
+          //return Text(snapshot.data!.responseMsg);
+          if (snapshot.data!.responseCode==1) {
+            print("giriş sayfasına yönlendiriliyorsunuz...");
+            return Text(snapshot.data!.responseMsg);
+            //Navigator.pushAndRemoveUntil(context, newRoute, (route) => false)
+          }else{
+            print("responsecode 1 değil");
+            return Text("Yanlış girdiniz.");
+          }
+        } else if(snapshot.hasError){
+          print(snapshot.error);
+          return Text('${snapshot.error}');
+        }  
+        return const CircularProgressIndicator();
+      },
+    );
+  }
+  
   /*
   Future<UserLoginResponseModel> login(String username, String userpassword) async{
     final response = await http.post(
