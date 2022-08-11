@@ -41,28 +41,67 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.teal.shade300,
         title: Text("Hoşgeldiniz"),
         actions: <Widget>[
-          ElevatedButton(
+          TextButton(
             onPressed: (){
               /*sharedPreferences.clear();*/
-              //Navigator.push(context,MaterialPageRoute(builder: (context) => loginScreen()));
-              //Navigator.pop(context);
               Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => loginScreen()), (Route<dynamic> route) => false);
             },
             child: Text("Çıkış yap",style: TextStyle(color: Colors.white),),
           )
         ],
       ),
-      body: buildBody(),
+      body: Form(child: buildBody())
     );
   }
   
-  Container buildBody() {
+  buildBody() {
     /*print("shared pref üyesi = "+sharedPreferences.getString("userID").toString());*/
-    return Container(
-      //child: Text(sharedPreferences.getString("userID").toString()),
-      child: Text("listele, job ekle cart curt"),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // üst tarafa bişeyler eklersek.
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text("asdasd"),
+          ),
+          _IsGirisBtn(),
+          _IsListeleBtn(),
+        ],
+      ),
     );
+    
   }
+  
+  _IsGirisBtn() => ButtonTheme(
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        primary: Colors.teal,
+        onSurface: Colors.amber,
+        minimumSize: Size(120.0, 40.0)
+      ),
+      child: Text("İş ekleme"),
+      onPressed: () {
+        return null;
+      },
+    ),
+  );
+  
+  _IsListeleBtn() => ButtonTheme(
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        primary: Colors.teal,
+        onSurface: Colors.amber,
+        minimumSize: Size(120.0, 40.0)
+      ),
+      child: Text("İşleri listele"),
+      onPressed: () {
+        return null;
+      },
+    ),
+  );
+
 }

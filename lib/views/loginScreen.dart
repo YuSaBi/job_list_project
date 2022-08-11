@@ -43,19 +43,11 @@ class _loginScreenState extends State<loginScreen> {
         centerTitle: true,
       ),
       resizeToAvoidBottomInset: false, // klavye açılınca oynatma
-      body: buildBody(),
+      body: Form(child: buildBody()),
     );
   }
   
   buildBody() {
-    return Form(
-      // key verilecek
-      //child: (_futureUserLogin == null) ? buildColumn() : buildFutureBuilder()
-      child: buildColumn(),
-    );
-  }
-
-  buildColumn() {
     return Padding(
       padding: const EdgeInsets.only(left: 20.0,right: 20.0),
       child: _isLoading ? Center(child: CircularProgressIndicator(),) : Column(
