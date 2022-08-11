@@ -1,5 +1,7 @@
 import 'dart:convert';
+//import 'dart:js';
 import 'package:http/http.dart' as http;
+import 'package:job_list_project/views/mainScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 //import 'package:job_list_project/models/userLogin.dart';
@@ -9,42 +11,7 @@ import '../decorations/textFieldClass.dart';
 import '../models/userLoginResponse.dart';
 //import '../models/userLoginM.dart';
 
-// future post method
-Future<LoginResponseModel> userLogin(String name, String password) async {
-  var jsonData;
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  final response = await http.post(
-    Uri.parse('http://10.0.2.2:8080/api/Default/UserLogin_Manager'),// 10.0.2.2   localhost  Mert : 192.168.177.172  Test_UserLogin
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, String>{
-      'username': name,
-      'userpassword': password,
-    }),
-  );
 
-  if (response.statusCode == 200) {
-    print("Body'miz bu şekilde: "+response.body);
-    jsonData = json.decode(response.body);
-    
-    if (jsonData['userID']==null) {
-      print("HATA: !!! userID boş geldi :( ");
-      sharedPreferences.setString("responseMsg", "HATA: !!! userID boş geldi :( ");
-    } else if(jsonData['userID']==0){
-      print("Kullanıcı adı veya şifre hatalı.");
-      sharedPreferences.setString("responseMsg", "Kullanıcı adı veya şifre hatalı.");
-    } else{
-      sharedPreferences.setString("responseMsg", "Giriş başarılı");
-      sharedPreferences.setString("userID", jsonData['userID'].toString());
-      sharedPreferences.setString("userName", name);
-    }
-    return LoginResponseModel.fromJson(jsonDecode(response.body));
-  } else {
-    print("net hatası olabilir, bağlantı hatası");
-    throw Exception('net hatası olabilir.');
-  }
-}
 
 
 /// MAIN CLASS ///
@@ -60,6 +27,7 @@ class _loginScreenState extends State<loginScreen> {
   final TextEditingController _usernameController=new TextEditingController();
   final TextEditingController _passwordController=new TextEditingController();
   Future<LoginResponseModel>? _futureUserLogin;
+  late SharedPreferences sharedPreferences;
   //Future<int>? _durum;
   //String username = "";
   //String password = "";
@@ -80,17 +48,17 @@ class _loginScreenState extends State<loginScreen> {
   }
   
   buildBody() {
-    double paddingLogin =20.0;
     return Form(
       // key verilecek
-      child: (_futureUserLogin == null) ? buildColumn() : buildFutureBuilder()
+      //child: (_futureUserLogin == null) ? buildColumn() : buildFutureBuilder()
+      child: buildColumn(),
     );
   }
 
   buildColumn() {
     return Padding(
       padding: const EdgeInsets.only(left: 20.0,right: 20.0),
-      child: Column(
+      child: _isLoading ? Center(child: CircularProgressIndicator(),) : Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           buildUsernameField(),
@@ -152,23 +120,81 @@ class _loginScreenState extends State<loginScreen> {
       height: 40.0,
       margin: EdgeInsets.only(top: 30.0),
       padding: EdgeInsets.symmetric(horizontal: 20.0),
-      child: RaisedButton(
+      child: ElevatedButton(
         onPressed: () {
           setState(() {
             _isLoading = true;
           });
-          _futureUserLogin = userLogin(_usernameController.text,_passwordController.text);//userLogin(_usernameController.text,_passwordController.text)
+          //_futureUserLogin = userLogin(_usernameController.text,_passwordController.text);//userLogin(_usernameController.text,_passwordController.text)
+          userLogin(_usernameController.text,_passwordController.text);
         },
-        color: Colors.teal,
-        shape:  RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5.0)
+        style: ElevatedButton.styleFrom(
+          primary: Colors.teal,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5.0)
+          )
         ),
         child: Text("Giriş yap",style: TextStyle(color: Colors.white),),
+        /*color: Colors.teal,
+        shape:  RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5.0)
+        ),*/
       ),
     );
   }
   
-  FutureBuilder<LoginResponseModel> buildFutureBuilder() {
+  // future post method
+  //Future<LoginResponseModel> userLogin(String name, String password) async {
+  userLogin(String name, String password) async {
+  var jsonData;
+  sharedPreferences = await SharedPreferences.getInstance();
+  final response = await http.post(
+    Uri.parse('http://10.0.2.2:8080/api/Default/UserLogin_Manager'),// 10.0.2.2   localhost  Mert : 192.168.177.172  Test_UserLogin
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'username': name,
+      'userpassword': password,
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    print("Body'miz bu şekilde: "+response.body);
+    //{"userID":35,"responseCode":1,"responseMsg":"Islem basarili"}
+    jsonData = json.decode(response.body);
+    
+    if (jsonData['responseCode']==null) {
+      print("HATA: !!! responseCode boş geldi :( beklenmeyen hata :() ");
+      sharedPreferences.setString("responseMsg", "HATA: !!! responseCode boş geldi :( ");
+    } else if(jsonData['responseCode']==0) {
+      print("Kullanıcı adı veya şifre hatalı.");
+      sharedPreferences.setString("responseMsg", "Kullanıcı adı veya şifre hatalı.");
+    } else if(jsonData['responseCode']==1) {
+      setState(() {
+      _isLoading=false;
+      sharedPreferences.setString("responseMsg", "Giriş başarılı");
+      sharedPreferences.setString("userID", jsonData['userID'].toString());
+      sharedPreferences.setString("userName", name.toString());
+      sharedPreferences.commit();
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => MainScreen()), (Route<dynamic> route) => false);
+      });
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+    //return LoginResponseModel.fromJson(jsonDecode(response.body));
+  } else {// responseCode!=200
+    print("net hatası olabilir, bağlantı hatası");
+    setState(() {
+      _isLoading=false;
+    });
+  }
+}
+
+  //FutureBuilder<LoginResponseModel> buildFutureBuilder() {
+    FutureBuilder buildFutureBuilder() {// buraya hiç girmiyoruz artık
     return FutureBuilder(
       future: _futureUserLogin,
       builder: (context, snapshot) {
@@ -177,9 +203,11 @@ class _loginScreenState extends State<loginScreen> {
           if (snapshot.data!.responseCode==1) {
             print("giriş sayfasına yönlendiriliyorsunuz...");
             //return Text(snapshot.data!.responseMsg);
-            //Navigator.pushAndRemoveUntil(context, newRoute, (route) => false) /// BURADAN YENİ SAYFAYA GİDİLECEK
+            //Navigator.pushAndRemoveUntil(context, newRoute, (route) => false); /// BURADAN YENİ SAYFAYA GİDİLECEK
+            // ÇALIŞAN Navigator.push(context,MaterialPageRoute(builder: (context) => MainScreen()));
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => MainScreen()), (Route<dynamic> route) => false);
             //GİDERKEN YANINDA LOGİNRESPONSE CLASSINDAN ÖRNEK GOTURECEK SNAPSHOT DATA İLE
-            return buildMainScreen();
+            //return buildMainScreen();
           }else{
             print("responsecode 1 değil");
             return Text("Yanlış girdiniz.");
@@ -188,7 +216,7 @@ class _loginScreenState extends State<loginScreen> {
           print(snapshot.error);
           return Text('${snapshot.error}');
         }  
-        return const CircularProgressIndicator();
+        return Center(child: const CircularProgressIndicator());
       },
     );
   }
