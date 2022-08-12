@@ -175,7 +175,7 @@ class _loginScreenState extends State<loginScreen> {
   var jsonData;
   //sharedPreferences = await SharedPreferences.getInstance();
   final response = await http.post(
-    Uri.parse('http://192.168.212.172:8080/api/Default/UserLogin_Manager'),// 10.0.2.2   localhost  Mert : 192.168.177.172  Test_UserLogin
+    Uri.parse('http://10.0.2.2:8080/api/Default/UserLogin_Manager'),// 10.0.2.2   localhost  Mert : 192.168.177.172  Test_UserLogin
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },

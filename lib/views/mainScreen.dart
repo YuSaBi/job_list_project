@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:job_list_project/views/loginScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../views/jobListview.dart';
 
 /// MAIN CLASS ///
 class MainScreen extends StatefulWidget{
@@ -74,7 +75,7 @@ class _MainScreenState extends State<MainScreen> {
           // üst tarafa bişeyler eklersek.
           const Padding(
             padding: EdgeInsets.all(8.0),
-            child: Text("asdasd"),
+            child: Text("kullanıcı : (Kullanici_adi)"),
           ),
           _IsGirisBtn(),
           _IsListeleBtn(),
@@ -107,7 +108,9 @@ class _MainScreenState extends State<MainScreen> {
       ),
       child: Text("İşleri listele"),
       onPressed: () {
-        return null;
+        //return null;
+        //Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => loginScreen()), (Route<dynamic> route) => false);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => jobListView(),));
       },
     ),
   );
