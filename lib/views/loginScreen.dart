@@ -17,6 +17,8 @@ import '../models/userLoginResponse.dart';
 /// MAIN CLASS ///
 class loginScreen extends StatefulWidget {
   loginScreen({Key? key}) : super(key: key);
+  //bool isLogged=false;
+  //loginScreen.withLogged(this.isLogged);
 
   @override
   State<loginScreen> createState() => _loginScreenState();
@@ -24,15 +26,47 @@ class loginScreen extends StatefulWidget {
 
 /// MAIN STATE ///
 class _loginScreenState extends State<loginScreen> {
+  //bool _isLogged;
   final TextEditingController _usernameController=new TextEditingController();
   final TextEditingController _passwordController=new TextEditingController();
   Future<LoginResponseModel>? _futureUserLogin;
   late SharedPreferences sharedPreferences;
-  //Future<int>? _durum;
-  //String username = "";
-  //String password = "";
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  //bool? sharedisLogged;
+
+  //_loginScreenState (this._isLogged);
+  _loginScreenState ();
+
+  @override
+  void initState() /*async*/{
+    /*
+    sharedPreferences = await SharedPreferences.getInstance();
+    sharedisLogged = sharedPreferences.getBool('isLogged');
+    if (sharedisLogged!=null) {
+      
+    }
+    if (_isLogged) {
+      sharedPreferences = await SharedPreferences.getInstance();
+      sharedPreferences.setBool('isLogged', true);
+      checkLogin();
+    }
+    */
+    checkLogin();
+    super.initState();
+  }
+
+   void checkLogin() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    //sharedisLogged = sharedPreferences.getBool("isLogged");
+    if (sharedPreferences.getBool("isLogged")==null||sharedPreferences.getBool("isLogged")==false) {
+      
+    }
+    else if (sharedPreferences.getString("userID").toString().isNotEmpty && sharedPreferences.getString("userID").toString()!="0") {// .toString() isteye bilir!!!!
+      //Navigator.push(context,MaterialPageRoute(builder: (context) => loginScreen()));
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => MainScreen()), (Route<dynamic> route) => false);
+    }
+   }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +80,7 @@ class _loginScreenState extends State<loginScreen> {
       body: Form(child: buildBody()),
     );
   }
-  
+
   buildBody() {
     return Padding(
       padding: const EdgeInsets.only(left: 20.0,right: 20.0),
@@ -139,9 +173,9 @@ class _loginScreenState extends State<loginScreen> {
   //Future<LoginResponseModel> userLogin(String name, String password) async {
   userLogin(String name, String password) async {
   var jsonData;
-  sharedPreferences = await SharedPreferences.getInstance();
+  //sharedPreferences = await SharedPreferences.getInstance();
   final response = await http.post(
-    Uri.parse('http://10.0.2.2:8080/api/Default/UserLogin_Manager'),// 10.0.2.2   localhost  Mert : 192.168.177.172  Test_UserLogin
+    Uri.parse('http://192.168.212.172:8080/api/Default/UserLogin_Manager'),// 10.0.2.2   localhost  Mert : 192.168.177.172  Test_UserLogin
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
@@ -168,6 +202,7 @@ class _loginScreenState extends State<loginScreen> {
       sharedPreferences.setString("responseMsg", "Giriş başarılı");
       sharedPreferences.setString("userID", jsonData['userID'].toString());
       sharedPreferences.setString("userName", name.toString());
+      sharedPreferences.setBool('isLogged', true);
       sharedPreferences.commit();
       Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => MainScreen()), (Route<dynamic> route) => false);
       });
@@ -306,6 +341,8 @@ class _loginScreenState extends State<loginScreen> {
       },
     ),
   );
+  
+ 
   
   /*
   Future<UserLoginResponseModel> login(String username, String userpassword) async{

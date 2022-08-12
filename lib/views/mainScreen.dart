@@ -18,13 +18,20 @@ class MainScreen extends StatefulWidget{
 /// MAIN STATE ///
 class _MainScreenState extends State<MainScreen> {
   // shared preferences dan kullanıcı adı çekilecek
-  /*late SharedPreferences sharedPreferences;*/
+  late SharedPreferences sharedPreferences;
+  //late SharedPreferences sharedPreferences;
   //String userName;
 
   @override
   void initState() {
     super.initState();
+    getSharedPreferences();
+    
     /*checkLoginStatus();*/
+  }
+
+  void getSharedPreferences() async{
+    sharedPreferences = await SharedPreferences.getInstance();
   }
 
   /*checkLoginStatus() async {
@@ -46,7 +53,8 @@ class _MainScreenState extends State<MainScreen> {
         actions: <Widget>[
           TextButton(
             onPressed: (){
-              /*sharedPreferences.clear();*/
+              //sharedPreferences.clear();
+              sharedPreferences.setBool('isLogged', false);
               Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => loginScreen()), (Route<dynamic> route) => false);
             },
             child: Text("Çıkış yap",style: TextStyle(color: Colors.white),),
@@ -103,5 +111,7 @@ class _MainScreenState extends State<MainScreen> {
       },
     ),
   );
+  
+  
 
 }
