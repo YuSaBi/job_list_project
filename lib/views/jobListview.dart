@@ -1,7 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:job_list_project/views/jobEditView.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// MAIN CLASS ///
@@ -15,15 +16,13 @@ class jobListView extends StatefulWidget{
 
 /// MAIN STATE ///
 class _jobListViewState extends State {
-  List sayilar = [
-    64,48,25,15,78,26,84,98,25,74,12,34
-  ];
   bool _isLoading=false;
   late SharedPreferences sharedPreferences;
   int userID=0;
+  late var veriler;
 
   @override
-  void initState() {
+  void initState()  {
     //getID();
     setState(() {
       _isLoading = true;
@@ -37,16 +36,19 @@ class _jobListViewState extends State {
   }*/
 
   void getJobs(int userID) async{
-    sharedPreferences = await SharedPreferences.getInstance();
+    var jsonData;
+    
     try {
+      sharedPreferences = await SharedPreferences.getInstance();
       userID=int.parse(sharedPreferences.getString('userID').toString());
       print(userID);
     } catch (e) {
       print(e.toString());
+      print("Shared Preferences ile iligili hata var");
     }
 
-    var jsonData;
-    final response = await http.post(
+    try {
+      final response = await http.post(
       Uri.parse('http://10.0.2.2:8080/api/Default/viewJobs'),// 10.0.2.2
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -54,20 +56,26 @@ class _jobListViewState extends State {
       body: jsonEncode(<String, dynamic>{ // INTEGER YAPMAK GEREKEBİLİR
       "userID": userID,
       }),
-    );
+      );
 
-    if (response.statusCode == 200) {
-      jsonData=json.decode(response.body);
-      setState(() {
-        _isLoading = false;
-      });
-    } else {// response.statusCode != 200
-      print("REsponseCode is not 200 !!!");
-      setState(() {
-        _isLoading = false;
-      });
+      if (response.statusCode == 200) {
+        jsonData=json.decode(response.body);
+        setState(() {
+          _isLoading = false;
+        });
+        veriler = jsonData["jobslist"];
+      } else {// response.statusCode != 200
+        print("ResponseCode is not 200 !!!");
+        setState(() {
+          veriler = "empty";
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      //print("Post ile ilgili bir sorun var :(");
     }
-
+    
+    _isLoading=false;
   }
 
   @override
@@ -104,33 +112,49 @@ class _jobListViewState extends State {
     );
   }
   
+  FutureOr onGoBackFunc(value) {
+    setState(() { });
+  }
+
   builderListView() {
-    return ListView.builder(
-      itemCount: sayilar.length,
-      itemBuilder: (context, index) {
-        return Column(
-          children: [
-            ListTile(
-              title: Text("iş: ${sayilar[index]}"),
-              trailing: ElevatedButton(
-                onPressed: (){ },
-                child: Text("sil"),
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.red.shade700,
-                  textStyle:
-                  TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+    return RefreshIndicator(
+      onRefresh: refresh,
+      child: ListView.builder(
+        itemCount:veriler=="empty"? 1 : veriler.length,
+        itemBuilder: (context, index) {
+          return _isLoading ? Center(child: CircularProgressIndicator(backgroundColor: Colors.grey.shade400),) : Column(
+            children: [
+              veriler == "empty" ?
+              const Text("Veriler çekilemedi, internet bağlantınızı kontrol edin") : 
+              ListTile(// ["jobslist"][index]["baslik"]
+                title: Text(veriler[index]["oncelik"]), // ${veriler[index]["baslik"]}
+                subtitle: Text(veriler[index]["baslik"]),// oğuzcan
+                leading: Text(veriler[index]["musteri"]),
+                trailing: ElevatedButton(
+                  onPressed: (){},
+                  child: Text("sil"),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.red.shade700,
+                    textStyle:
+                    TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
                 ),
+                onTap: () {
+                  Route route = MaterialPageRoute(builder: (context) => jobEdit());
+                  Navigator.push(context, route).then(onGoBackFunc);
+                },
               ),
-            ),
-            Divider(height: 0.0, color: Colors.teal, thickness: 0.5,),
-          ],
-        );
-      },
+              Divider(height: 0.0, color: Colors.teal, thickness: 0.5,),
+            ],
+          );
+        },
+      ),
     );
   }
-  
 
-  
-  
-
+  Future<void> refresh() async{
+    setState(() {
+      
+    });
+  }
 }
