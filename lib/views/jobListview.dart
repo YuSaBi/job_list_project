@@ -24,31 +24,27 @@ class _jobListViewState extends State {
 
   @override
   void initState() {
+    //getID();
     setState(() {
       _isLoading = true;
     });
-    if (getID()) {
-      getJobs(userID);
-    }
-    getID();
-    
-    
+    getJobs(userID);
     super.initState();
   }
 
-  getID() async{
-    sharedPreferences = await SharedPreferences.getInstance();
-    try {
-      this.userID=int.parse(sharedPreferences.getString('userID').toString());
-      print(userID);
-      return true;
-    } catch (e) {
-      print(e.toString());
-      return false;
-    }
-  }
+  /*void getID() async{
+    
+  }*/
 
   void getJobs(int userID) async{
+    sharedPreferences = await SharedPreferences.getInstance();
+    try {
+      userID=int.parse(sharedPreferences.getString('userID').toString());
+      print(userID);
+    } catch (e) {
+      print(e.toString());
+    }
+
     var jsonData;
     final response = await http.post(
       Uri.parse('http://10.0.2.2:8080/api/Default/viewJobs'),// 10.0.2.2
