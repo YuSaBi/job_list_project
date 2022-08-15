@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:job_list_project/models/jobModel.dart';
 import 'package:job_list_project/views/jobEditView.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,6 +21,8 @@ class _jobListViewState extends State {
   late SharedPreferences sharedPreferences;
   int userID=0;
   late var veriler;
+  jobModel selectedJob = jobModel(-1,"baslik", "detay", "durum", DateTime.now(), 0, "musteri", "oncelik");
+  int selectedJobId=-1;
 
   @override
   void initState()  {
@@ -99,14 +102,6 @@ class _jobListViewState extends State {
             child: builderListView()
           ),
           SizedBox(height: 5.0,),
-          //Text("Seçili olan: "),
-          /*
-          Row(
-            children: <Widget>[
-
-            ],
-          )
-          */
         ],
       ),
     );
@@ -140,7 +135,8 @@ class _jobListViewState extends State {
                   ),
                 ),
                 onTap: () {
-                  Route route = MaterialPageRoute(builder: (context) => jobEdit());
+                  convertSelectedJob(index);
+                  Route route = MaterialPageRoute(builder: (context) => jobEdit(selectedJob));
                   Navigator.push(context, route).then(onGoBackFunc);
                 },
               ),
@@ -156,5 +152,17 @@ class _jobListViewState extends State {
     setState(() {
       
     });
+  }
+  
+  void convertSelectedJob(int index) {
+    //selectedJob = veriler[index];
+    selectedJob.Id = veriler[index]["id"];
+    selectedJob.baslik = veriler[index]["baslik"];
+    selectedJob.detay = veriler[index]["detay"];
+    selectedJob.gun = DateTime.parse(veriler[index]["gun"]) ;
+    selectedJob.harcananSure = veriler[index]["harcananSure"];
+    selectedJob.musteri = veriler[index]["musteri"];
+    selectedJob.durum = veriler[index]["durum"];
+    selectedJob.oncelik = veriler[index]["oncelik"];
   }
 }

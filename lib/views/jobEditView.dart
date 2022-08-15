@@ -1,15 +1,22 @@
 //import 'package:flutter/src/foundation/key.dart';
 //import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
+import 'package:job_list_project/models/jobModel.dart';
 
 /// MAIN CLASS ///
 class jobEdit extends StatelessWidget {
-  const jobEdit({Key? key}) : super(key: key);
+  jobModel selectedJob;
+
+  jobEdit(this.selectedJob);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Düzenle"),),
+      appBar: AppBar(
+        title: const Text("Düzenle"),
+        backgroundColor: Colors.teal.shade300,
+        centerTitle: true,
+        ),
       body: buildBody(),
     );
   }
@@ -48,7 +55,7 @@ class jobEdit extends StatelessWidget {
       decoration: const InputDecoration(
         labelText: "Başlık",
       ),
-      initialValue: "[Default]",
+      initialValue: selectedJob.baslik,
       /*onSaved: (newValue) {
         "cart curt"
       },*/
@@ -60,7 +67,7 @@ class jobEdit extends StatelessWidget {
       decoration: const InputDecoration(
         labelText: "Detay",
       ),
-      initialValue: "[Default]",
+      initialValue: selectedJob.detay,
       /*onSaved: (newValue) {
         "cart curt"
       },*/
@@ -72,7 +79,7 @@ class jobEdit extends StatelessWidget {
       decoration: const InputDecoration(
         labelText: "Gün",
       ),
-      initialValue: "[Default]",
+      initialValue: selectedJob.gun.toString(),
       /*onSaved: (newValue) {
         "cart curt"
       },*/
@@ -84,7 +91,7 @@ class jobEdit extends StatelessWidget {
       decoration: const InputDecoration(
         labelText: "Harcanan Süre (dk)",
       ),
-      initialValue: "[Default]",
+      initialValue: selectedJob.harcananSure.toString(),
       /*onSaved: (newValue) {
         "cart curt"
       },*/
@@ -96,7 +103,7 @@ class jobEdit extends StatelessWidget {
       decoration: const InputDecoration(
         labelText: "Müsteri",
       ),
-      initialValue: "[Default]",
+      initialValue: selectedJob.musteri,
       /*onSaved: (newValue) {
         "cart curt"
       },*/
@@ -108,7 +115,7 @@ class jobEdit extends StatelessWidget {
       decoration: const InputDecoration(
         labelText: "Durum",
       ),
-      initialValue: "[Default]",
+      initialValue: selectedJob.durum,
       /*onSaved: (newValue) {
         "cart curt"
       },*/
@@ -120,7 +127,7 @@ class jobEdit extends StatelessWidget {
       decoration: const InputDecoration(
         labelText: "Öncelik",
       ),
-      initialValue: "[Default]",
+      initialValue: selectedJob.oncelik,
       /*onSaved: (newValue) {
         "cart curt"
       },*/
@@ -129,6 +136,11 @@ class jobEdit extends StatelessWidget {
   
   buildSubmitButton() {
     return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        primary: Colors.teal,
+        onSurface: Colors.amber,
+        minimumSize: Size(80.0, 40.0)
+      ),
       child: const Text("Kaydet"),
       onPressed: () {
         //formKey.currentState!.save();// Tüm formField'ların onSaved'larını çalıştırır
