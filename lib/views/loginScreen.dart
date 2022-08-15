@@ -172,53 +172,51 @@ class _loginScreenState extends State<loginScreen> {
   // future post method
   //Future<LoginResponseModel> userLogin(String name, String password) async {
   userLogin(String name, String password) async {
-  var jsonData;
-  //sharedPreferences = await SharedPreferences.getInstance();
-  final response = await http.post(
-    Uri.parse('http://10.0.2.2:8080/api/Default/UserLogin_Manager'),// 10.0.2.2   localhost  Mert : 192.168.177.172  Test_UserLogin
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, dynamic>{
-      'username': name,
-      'userpassword': password,
-    }),
-  );
+    var jsonData;
+    //sharedPreferences = await SharedPreferences.getInstance();
+    final response = await http.post(
+      Uri.parse('http://10.0.2.2:8080/api/Default/UserLogin_Manager'),// 10.0.2.2   localhost  Mert : 192.168.177.172  Test_UserLogin
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'username': name,
+        'userpassword': password,
+      }),
+    );
 
-  if (response.statusCode == 200) {
-    print("Body'miz bu şekilde: "+response.body);
-    //{"userID":35,"responseCode":1,"responseMsg":"Islem basarili"}
-    jsonData = json.decode(response.body);
-    
-    if (jsonData['responseCode']==null) {
-      print("HATA: !!! responseCode boş geldi :( beklenmeyen hata :() ");
-      sharedPreferences.setString("responseMsg", "HATA: !!! responseCode boş geldi :( ");
-    } else if(jsonData['responseCode']==0) {
-      print("Kullanıcı adı veya şifre hatalı.");
-      sharedPreferences.setString("responseMsg", "Kullanıcı adı veya şifre hatalı.");
-    } else if(jsonData['responseCode']==1) {
+    if (response.statusCode == 200) {
+      jsonData = json.decode(response.body);
+      
+      if (jsonData['responseCode']==null) {
+        print("HATA: !!! responseCode boş geldi :( beklenmeyen hata :() ");
+        sharedPreferences.setString("responseMsg", "HATA: !!! responseCode boş geldi :( ");
+      } else if(jsonData['responseCode']==0) {
+        print("Kullanıcı adı veya şifre hatalı.");
+        sharedPreferences.setString("responseMsg", "Kullanıcı adı veya şifre hatalı.");
+      } else if(jsonData['responseCode']==1) {
+        setState(() {
+        _isLoading=false;
+        sharedPreferences.setString("responseMsg", "Giriş başarılı");
+        sharedPreferences.setString("userID", jsonData['userID'].toString());
+        sharedPreferences.setString("userName", name.toString());
+        sharedPreferences.setBool('isLogged', true);
+        sharedPreferences.commit();
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => MainScreen()), (Route<dynamic> route) => false);
+        });
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+      //return LoginResponseModel.fromJson(jsonDecode(response.body));
+    } else {// responseCode!=200
+      print("net hatası olabilir, bağlantı hatası");
       setState(() {
-      _isLoading=false;
-      sharedPreferences.setString("responseMsg", "Giriş başarılı");
-      sharedPreferences.setString("userID", jsonData['userID'].toString());
-      sharedPreferences.setString("userName", name.toString());
-      sharedPreferences.setBool('isLogged', true);
-      sharedPreferences.commit();
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => MainScreen()), (Route<dynamic> route) => false);
-      });
-    } else {
-      setState(() {
-        _isLoading = false;
+        _isLoading=false;
       });
     }
-    //return LoginResponseModel.fromJson(jsonDecode(response.body));
-  } else {// responseCode!=200
-    print("net hatası olabilir, bağlantı hatası");
-    setState(() {
-      _isLoading=false;
-    });
   }
-}
 
   //FutureBuilder<LoginResponseModel> buildFutureBuilder() {
     FutureBuilder buildFutureBuilder() {// buraya hiç girmiyoruz artık
