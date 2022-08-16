@@ -1,22 +1,18 @@
-//import 'package:flutter/rendering.dart';
-
-class jobModel {
+class jobRequestModel {
   int Id;
   String? baslik;
   String? detay;
-  DateTime gun;
   int harcananSure;
-  String? musteri;
-  String? durum;
-  String? oncelik;
+  int musteri;
+  int durum;
+  int oncelik;
   bool secili = false;
 
-  jobModel(
+  jobRequestModel(
     this.Id,
     this.baslik,
     this.detay,
     this.durum,
-    this.gun,
     this.harcananSure,
     this.musteri,
     this.oncelik,

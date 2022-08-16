@@ -1,5 +1,6 @@
 //import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:job_list_project/views/jobAddView.dart';
 import 'package:job_list_project/views/loginScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../views/jobListview.dart';
@@ -94,7 +95,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
       child: Text("İş ekleme"),
       onPressed: () {
-        return null;
+        Navigator.push(context, MaterialPageRoute(builder: (context) => jobAdd(),));
       },
     ),
   );

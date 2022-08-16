@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:job_list_project/models/jobModel.dart';
+import 'package:job_list_project/models/jobResponseModel.dart';
 import 'package:job_list_project/views/jobEditView.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,7 +21,7 @@ class _jobListViewState extends State {
   late SharedPreferences sharedPreferences;
   int userID=0;
   late var veriler;
-  jobModel selectedJob = jobModel(-1,"baslik", "detay", "durum", DateTime.now(), 0, "musteri", "oncelik");
+  jobResponseModel selectedJob = jobResponseModel(-1,"baslik", "detay", "durum", DateTime.now(), 0, "musteri", "oncelik");
   //int selectedJobId=-1;
 
   @override

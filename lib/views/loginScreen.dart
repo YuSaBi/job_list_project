@@ -39,19 +39,7 @@ class _loginScreenState extends State<loginScreen> {
   _loginScreenState ();
 
   @override
-  void initState() /*async*/{
-    /*
-    sharedPreferences = await SharedPreferences.getInstance();
-    sharedisLogged = sharedPreferences.getBool('isLogged');
-    if (sharedisLogged!=null) {
-      
-    }
-    if (_isLogged) {
-      sharedPreferences = await SharedPreferences.getInstance();
-      sharedPreferences.setBool('isLogged', true);
-      checkLogin();
-    }
-    */
+  void initState() {
     checkLogin();
     super.initState();
   }
@@ -63,7 +51,6 @@ class _loginScreenState extends State<loginScreen> {
       
     }
     else if (sharedPreferences.getString("userID").toString().isNotEmpty && sharedPreferences.getString("userID").toString()!="0") {// .toString() isteye bilir!!!!
-      //Navigator.push(context,MaterialPageRoute(builder: (context) => loginScreen()));
       Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => MainScreen()), (Route<dynamic> route) => false);
     }
    }

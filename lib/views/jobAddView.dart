@@ -1,23 +1,25 @@
-//import 'package:flutter/src/foundation/key.dart';
-//import 'package:flutter/src/widgets/framework.dart';
-//import 'package:flutter/gestures.dart';
+//import 'package:flutter/cupertino.dart';
+import 'dart:js';
+
 import 'package:flutter/material.dart';
-import 'package:job_list_project/models/jobResponseModel.dart';
+import 'package:job_list_project/models/jobRequestModel.dart';
+//import 'package:job_list_project/models/jobResponseModel.dart';
 
 /// MAIN CLASS ///
-class jobEdit extends StatelessWidget {
-  jobResponseModel selectedJob;
-
-  jobEdit(this.selectedJob);
-
+class jobAdd extends StatelessWidget {
+  jobRequestModel eklenecekJob=jobRequestModel(-1, "", "",  -1, -1, -1, -1);
+  final _formKey = GlobalKey<FormState>();
+  //jobAdd({Key? key}) : super(key: key);
+  
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Düzenle"),
+        title: const Text("İş ekle"),
         backgroundColor: Colors.teal.shade300,
         centerTitle: true,
-        ),
+      ),
       body: buildBody(),
     );
   }
@@ -27,26 +29,23 @@ class jobEdit extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(10.0),
       child: Form(
-        //key: _formKey, Ihtiyac olmayacak gibi
+        key: _formKey,
         child: SingleChildScrollView(
-          //dragStartBehavior: DragStartBehavior.down,
           child: Column(
             children: [
               buildBaslikField(),
               const SizedBox(height: 5.0,),
               buildDetayField(),
               const SizedBox(height: 5.0,),
-              buildGunFiled(),
+              buildCustomerIdField(),
               const SizedBox(height: 5.0,),
               buildHarcanansureField(),
               const SizedBox(height: 5.0,),
-              buildMusteriField(),
-              const SizedBox(height: 5.0,),
               buildDurumField(),
               const SizedBox(height: 5.0,),
-              buildOncelikField(),
-              const SizedBox(height: 10.0,),
-              buildSubmitButton()
+              buildPriorityField(),
+              const SizedBox(height: 5.0,),
+              buildSubmitButton(),
             ],
           ),
         )
@@ -59,10 +58,9 @@ class jobEdit extends StatelessWidget {
       decoration: const InputDecoration(
         labelText: "Başlık",
       ),
-      initialValue: selectedJob.baslik,
-      /*onSaved: (newValue) {
-        "cart curt"
-      },*/
+      onSaved: (newValue) {
+        eklenecekJob.baslik=newValue;
+      },
     );
   }
   
@@ -71,23 +69,20 @@ class jobEdit extends StatelessWidget {
       decoration: const InputDecoration(
         labelText: "Detay",
       ),
-      initialValue: selectedJob.detay,
-      /*onSaved: (newValue) {
-        "cart curt"
-      },*/
+      onSaved: (newValue) {
+        eklenecekJob.detay=newValue;
+      },
     );
   }
   
-  buildGunFiled() {
+  buildCustomerIdField() {
     return TextFormField(
-      enabled: false,
       decoration: const InputDecoration(
-        labelText: "Gün",
+        labelText: "Müsteri",
       ),
-      initialValue: selectedJob.gun.toString(),
-      /*onSaved: (newValue) {
-        "cart curt"
-      },*/
+      onSaved: (newValue) {
+        eklenecekJob.musteri=1; // DEĞİŞTİRİLECEK
+      },
     );
   }
   
@@ -96,22 +91,9 @@ class jobEdit extends StatelessWidget {
       decoration: const InputDecoration(
         labelText: "Harcanan Süre (dk)",
       ),
-      initialValue: selectedJob.harcananSure.toString(),
-      /*onSaved: (newValue) {
-        "cart curt"
-      },*/
-    );
-  }
-  
-  buildMusteriField() {
-    return TextFormField(
-      decoration: const InputDecoration(
-        labelText: "Müsteri",
-      ),
-      initialValue: selectedJob.musteri,
-      /*onSaved: (newValue) {
-        "cart curt"
-      },*/
+      onSaved: (newValue) {
+        eklenecekJob.harcananSure=int.parse(newValue.toString());
+      },
     );
   }
   
@@ -120,22 +102,20 @@ class jobEdit extends StatelessWidget {
       decoration: const InputDecoration(
         labelText: "Durum",
       ),
-      initialValue: selectedJob.durum,
-      /*onSaved: (newValue) {
-        "cart curt"
-      },*/
+      onSaved: (newValue) {
+        eklenecekJob.durum=1; // DEĞİŞTİRİLECEK
+      },
     );
   }
   
-  buildOncelikField() {
+  buildPriorityField() {
     return TextFormField(
       decoration: const InputDecoration(
         labelText: "Öncelik",
       ),
-      initialValue: selectedJob.oncelik,
-      /*onSaved: (newValue) {
-        "cart curt"
-      },*/
+      onSaved: (newValue) {
+        eklenecekJob.oncelik=1; // DEĞİŞTİRİLECEK
+      },
     );
   }
   
@@ -143,17 +123,15 @@ class jobEdit extends StatelessWidget {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         primary: Colors.teal,
-        onSurface: Colors.amber,
-        minimumSize: Size(80.0, 40.0)
+        minimumSize: const Size(80, 40)
       ),
       child: const Text("Kaydet"),
       onPressed: () {
-        //formKey.currentState!.save();// Tüm formField'ların onSaved'larını çalıştırır
-        //widget.students[widget.index]=studentYeni; CART CURT işlemler
+        _formKey.currentState!.save();
+        
         //Navigator.pop(context);
-        return null;
       },
     );
   }
-
+  
 }
