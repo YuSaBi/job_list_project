@@ -22,7 +22,7 @@ class _jobListViewState extends State {
   int userID=0;
   late var veriler;
   jobModel selectedJob = jobModel(-1,"baslik", "detay", "durum", DateTime.now(), 0, "musteri", "oncelik");
-  int selectedJobId=-1;
+  //int selectedJobId=-1;
 
   @override
   void initState()  {
@@ -33,10 +33,6 @@ class _jobListViewState extends State {
     getJobs(userID);
     super.initState();
   }
-
-  /*void getID() async{
-    
-  }*/
 
   void getJobs(int userID) async{
     var jsonData;
@@ -79,6 +75,29 @@ class _jobListViewState extends State {
     }
     
     _isLoading=false;
+  }
+
+  void delJob(int jobID) async{
+    try {
+      final response = await http.post(
+      Uri.parse('http://10.0.2.2:8080/api/Default/deleteJob_Manager'),// 10.0.2.2
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{ // INTEGER YAPMAK GEREKEBİLİR
+        "jobID": jobID
+      }),
+      );
+
+      if (response.statusCode == 200) {
+        print(response.body);
+      } else {// response.statusCode != 200
+        print("ResponseCode is not 200 !!!");
+      }
+    } catch (e) {
+      print("Silme işleminde bir hata oluştu :(");
+    }
+    getJobs(userID);
   }
 
   @override
@@ -126,7 +145,12 @@ class _jobListViewState extends State {
                 subtitle: Text(veriler[index]["baslik"]),// oğuzcan
                 leading: Text(veriler[index]["musteri"]),
                 trailing: ElevatedButton(
-                  onPressed: (){},
+                  onPressed: (){
+                    setState(() {
+                      _isLoading =true;
+                    });
+                    delJob(veriler[index]["id"]);
+                  },
                   child: Text("sil"),
                   style: ElevatedButton.styleFrom(
                     primary: Colors.red.shade700,
@@ -149,9 +173,7 @@ class _jobListViewState extends State {
   }
 
   Future<void> refresh() async{
-    setState(() {
-      
-    });
+    getJobs(userID);
   }
   
   void convertSelectedJob(int index) {
@@ -165,4 +187,6 @@ class _jobListViewState extends State {
     selectedJob.durum = veriler[index]["durum"];
     selectedJob.oncelik = veriler[index]["oncelik"];
   }
+  
+
 }

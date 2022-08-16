@@ -1,5 +1,6 @@
 //import 'package:flutter/src/foundation/key.dart';
 //import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:job_list_project/models/jobModel.dart';
 
@@ -24,27 +25,30 @@ class jobEdit extends StatelessWidget {
   /// BODY ///
   buildBody() {
     return Container(
-      margin: const EdgeInsets.all(20.0),
+      margin: const EdgeInsets.all(10.0),
       child: Form(
         //key: _formKey, Ihtiyac olmayacak gibi
-        child: Column(
-          children: [
-            buildBaslikField(),
-            const SizedBox(height: 5.0,),
-            buildDetayField(),
-            const SizedBox(height: 5.0,),
-            buildGunFiled(),
-            const SizedBox(height: 5.0,),
-            buildHarcanansureField(),
-            const SizedBox(height: 5.0,),
-            buildMusteriField(),
-            const SizedBox(height: 5.0,),
-            buildDurumField(),
-            const SizedBox(height: 5.0,),
-            buildOncelikField(),
-            const SizedBox(height: 10.0,),
-            buildSubmitButton()
-          ],
+        child: SingleChildScrollView(
+          dragStartBehavior: DragStartBehavior.down,
+          child: Column(
+            children: [
+              buildBaslikField(),
+              const SizedBox(height: 5.0,),
+              buildDetayField(),
+              const SizedBox(height: 5.0,),
+              buildGunFiled(),
+              const SizedBox(height: 5.0,),
+              buildHarcanansureField(),
+              const SizedBox(height: 5.0,),
+              buildMusteriField(),
+              const SizedBox(height: 5.0,),
+              buildDurumField(),
+              const SizedBox(height: 5.0,),
+              buildOncelikField(),
+              const SizedBox(height: 10.0,),
+              buildSubmitButton()
+            ],
+          ),
         )
       ),
     );
