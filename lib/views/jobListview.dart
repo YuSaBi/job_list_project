@@ -104,7 +104,7 @@ class _jobListViewState extends State {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("İş Listesi"),
+        title: const Text("İş Listesi"),
         backgroundColor: Colors.teal.shade300,
         centerTitle: true,
       ),
@@ -115,12 +115,12 @@ class _jobListViewState extends State {
   buildBody() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: _isLoading ? Center(child: CircularProgressIndicator(),) : Column(
+      child: _isLoading ? const Center(child: CircularProgressIndicator(),) : Column(
         children: <Widget>[
           Expanded(
             child: builderListView()
           ),
-          SizedBox(height: 5.0,),
+          const SizedBox(height: 5.0,),
         ],
       ),
     );
@@ -151,12 +151,12 @@ class _jobListViewState extends State {
                     });
                     delJob(veriler[index]["id"]);
                   },
-                  child: Text("sil"),
                   style: ElevatedButton.styleFrom(
                     primary: Colors.red.shade700,
                     textStyle:
-                    TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ),
+                  child: const Text("sil"),
                 ),
                 onTap: () {
                   convertSelectedJob(index);
@@ -164,7 +164,7 @@ class _jobListViewState extends State {
                   Navigator.push(context, route).then(onGoBackFunc);
                 },
               ),
-              Divider(height: 0.0, color: Colors.teal, thickness: 0.5,),
+              const Divider(height: 0.0, color: Colors.teal, thickness: 0.5,),
             ],
           );
         },
