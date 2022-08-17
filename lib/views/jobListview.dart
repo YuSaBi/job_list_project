@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../models/httpConfig.dart';
 import 'package:job_list_project/models/jobResponseModel.dart';
 import 'package:job_list_project/views/jobEditView.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,10 +46,11 @@ class _jobListViewState extends State {
       print(e.toString());
       print("Shared Preferences ile iligili hata var");
     }
-
+    postMethodConfig config = postMethodConfig();
     try {
+      
       final response = await http.post(
-      Uri.parse('http://10.0.2.2:8080/api/Default/viewJobs'),// 10.0.2.2
+      Uri.parse('${config.baseUrl}viewJobs'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -71,16 +73,18 @@ class _jobListViewState extends State {
         });
       }
     } catch (e) {
-      //print("Post ile ilgili bir sorun var :(");
+      print(e.toString());
+      print("Post ile ilgili bir sorun var :(");
     }
     
     _isLoading=false;
   }
 
   void delJob(int jobID) async{
+    postMethodConfig config = postMethodConfig();
     try {
       final response = await http.post(
-      Uri.parse('http://10.0.2.2:8080/api/Default/deleteJob_Manager'),// 10.0.2.2
+      Uri.parse('${config.baseUrl}deleteJob_Manager'),// 10.0.2.2
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -127,7 +131,9 @@ class _jobListViewState extends State {
   }
   
   FutureOr onGoBackFunc(value) {
-    setState(() { });
+    setState(() {
+      getJobs(userID);
+    });
   }
 
   builderListView() {
@@ -141,8 +147,8 @@ class _jobListViewState extends State {
               veriler == "empty" ?
               const Text("Veriler çekilemedi, internet bağlantınızı kontrol edin") : 
               ListTile(// ["jobslist"][index]["baslik"]
-                title: Text(veriler[index]["oncelik"]), // ${veriler[index]["baslik"]}
-                subtitle: Text(veriler[index]["baslik"]),// oğuzcan
+                title: Text(veriler[index]["baslik"]), // ${veriler[index]["baslik"]}
+                subtitle: Text(veriler[index]["durum"]),// oğuzcan
                 leading: Text(veriler[index]["musteri"]),
                 trailing: ElevatedButton(
                   onPressed: (){

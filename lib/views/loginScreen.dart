@@ -1,24 +1,15 @@
 import 'dart:convert';
-//import 'dart:js';
 import 'package:http/http.dart' as http;
 import 'package:job_list_project/views/mainScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
-//import 'package:job_list_project/models/userLogin.dart';
-//import 'package:job_list_project/models/userLoginRequest.dart';
 import '../decorations/textFieldClass.dart';
-//import '../models/userLogin.dart';
 import '../models/userLoginResponse.dart';
-//import '../models/userLoginM.dart';
-
-
-
+import '../models/httpConfig.dart';
 
 /// MAIN CLASS ///
 class loginScreen extends StatefulWidget {
   loginScreen({Key? key}) : super(key: key);
-  //bool isLogged=false;
-  //loginScreen.withLogged(this.isLogged);
 
   @override
   State<loginScreen> createState() => _loginScreenState();
@@ -33,10 +24,8 @@ class _loginScreenState extends State<loginScreen> {
   late SharedPreferences sharedPreferences;
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
-  //bool? sharedisLogged;
 
-  //_loginScreenState (this._isLogged);
-  _loginScreenState ();
+  //_loginScreenState ();
 
   @override
   void initState() {
@@ -44,16 +33,15 @@ class _loginScreenState extends State<loginScreen> {
     super.initState();
   }
 
-   void checkLogin() async {
+  void checkLogin() async {
     sharedPreferences = await SharedPreferences.getInstance();
-    //sharedisLogged = sharedPreferences.getBool("isLogged");
     if (sharedPreferences.getBool("isLogged")==null||sharedPreferences.getBool("isLogged")==false) {
-      
-    }
-    else if (sharedPreferences.getString("userID").toString().isNotEmpty && sharedPreferences.getString("userID").toString()!="0") {// .toString() isteye bilir!!!!
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => MainScreen()), (Route<dynamic> route) => false);
-    }
-   }
+    
+  }
+  else if (sharedPreferences.getString("userID").toString().isNotEmpty && sharedPreferences.getString("userID").toString()!="0") {// .toString() isteye bilir!!!!
+    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => MainScreen()), (Route<dynamic> route) => false);
+  }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -160,9 +148,10 @@ class _loginScreenState extends State<loginScreen> {
   //Future<LoginResponseModel> userLogin(String name, String password) async {
   userLogin(String name, String password) async {
     var jsonData;
+    postMethodConfig config=postMethodConfig();
     //sharedPreferences = await SharedPreferences.getInstance();
     final response = await http.post(
-      Uri.parse('http://10.0.2.2:8080/api/Default/UserLogin_Manager'),// 10.0.2.2   localhost  Mert : 192.168.177.172  Test_UserLogin
+      Uri.parse("${config.baseUrl}UserLogin_Manager"),// 10.0.2.2   localhost  Mert : 192.168.177.172  Test_UserLogin
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -177,14 +166,14 @@ class _loginScreenState extends State<loginScreen> {
       
       if (jsonData['responseCode']==null) {
         print("HATA: !!! responseCode boş geldi :( beklenmeyen hata :() ");
-        sharedPreferences.setString("responseMsg", "HATA: !!! responseCode boş geldi :( ");
+        //sharedPreferences.setString("responseMsg", "HATA: !!! responseCode boş geldi :( ");
       } else if(jsonData['responseCode']==0) {
         print("Kullanıcı adı veya şifre hatalı.");
-        sharedPreferences.setString("responseMsg", "Kullanıcı adı veya şifre hatalı.");
+        //sharedPreferences.setString("responseMsg", "Kullanıcı adı veya şifre hatalı.");
       } else if(jsonData['responseCode']==1) {
         setState(() {
         _isLoading=false;
-        sharedPreferences.setString("responseMsg", "Giriş başarılı");
+        //sharedPreferences.setString("responseMsg", "Giriş başarılı");
         sharedPreferences.setString("userID", jsonData['userID'].toString());
         sharedPreferences.setString("userName", name.toString());
         sharedPreferences.setBool('isLogged', true);
@@ -327,31 +316,4 @@ class _loginScreenState extends State<loginScreen> {
     ),
   );
   
- 
-  
-  /*
-  Future<UserLoginResponseModel> login(String username, String userpassword) async{
-    final response = await http.post(
-    Uri.parse('https://localhost:8082/api/Default/userLogin_Manager'),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, String>{
-      'username': username,
-      'userpassword': userpassword,
-    }),
-  );
-
-  if (response.statusCode == 201) {
-    // If the server did return a 201 CREATED response,
-    // then parse the JSON.
-    return UserLoginResponseModel.fromJson(jsonDecode(response.body));
-  } else {
-    // If the server did not return a 201 CREATED response,
-    // then throw an exception.
-    throw Exception('Failed to create album.');
-  }
-  }
-  */
-
 }
