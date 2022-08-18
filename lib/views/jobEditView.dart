@@ -61,7 +61,6 @@ class _jobEdit extends State {
       child: Form(
         key: _formKey,// Ihtiyac olmayacak gibi
         child: SingleChildScrollView(
-          //dragStartBehavior: DragStartBehavior.down,
           child: _isLoading? const Center(child: CircularProgressIndicator(),) : Column(
             children: [
               buildBaslikField(),
@@ -88,9 +87,16 @@ class _jobEdit extends State {
   
   buildBaslikField() {
     return TextFormField(
+      
       decoration: const InputDecoration(
         labelText: "Başlık",
       ),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: ((value) {
+        if (value == null || value.isEmpty) {
+          return "başlık değeri boş bırakılamaz";
+        }
+      }),
       initialValue: selectedJob.baslik,
       onSaved: (newValue) {
         editedJob.baslik=newValue;
@@ -101,9 +107,17 @@ class _jobEdit extends State {
   
   buildDetayField() {
     return TextFormField(
+      keyboardType: TextInputType.multiline,
+      maxLines: null,
       decoration: const InputDecoration(
         labelText: "Detay",
       ),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: ((value) {
+        if (value == null || value.isEmpty) {
+          return "Detay değeri boş bırakılamaz";
+        }
+      }),
       initialValue: selectedJob.detay,
       onSaved: (newValue) {
         editedJob.detay=newValue;
@@ -126,6 +140,12 @@ class _jobEdit extends State {
       decoration: const InputDecoration(
         labelText: "Harcanan Süre (dk)",
       ),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: ((value) {
+        if (value == null || value.isEmpty) { 
+          return "Harcanan süre değeri boş bırakılamaz";
+        }
+      }),
       initialValue: selectedJob.harcananSure.toString(),
       onSaved: (newValue) {
        editedJob.harcananSure=int.parse(newValue.toString());
@@ -138,6 +158,12 @@ class _jobEdit extends State {
       decoration: const InputDecoration(
         labelText: "Müsteri",
       ),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: ((value) {
+        if (value == null || value.isEmpty) {
+          return "Müşteri değeri boş bırakılamaz";
+        }
+      }),
       initialValue: selectedJob.musteri,
       onSaved: (newValue) {
         editedJob.musteri=int.parse(newValue.toString());
@@ -150,6 +176,12 @@ class _jobEdit extends State {
       decoration: const InputDecoration(
         labelText: "Durum",
       ),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: ((value) {
+        if (value == null || value.isEmpty) {
+          return "Durum değeri boş bırakılamaz";
+        }
+      }),
       initialValue: selectedJob.durum,
       onSaved: (newValue) {
         editedJob.durum=int.parse(newValue.toString());
@@ -162,6 +194,12 @@ class _jobEdit extends State {
       decoration: const InputDecoration(
         labelText: "Öncelik",
       ),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: ((value) {
+        if (value == null || value.isEmpty) {
+          return "Öncelik değeri boş bırakılamaz";
+        }
+      }),
       initialValue: selectedJob.oncelik,
       onSaved: (newValue) {
         editedJob.oncelik=int.parse(newValue.toString());
@@ -173,15 +211,23 @@ class _jobEdit extends State {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         primary: Colors.teal,
-        onSurface: Colors.amber,
-        minimumSize: Size(80.0, 40.0)
+        minimumSize: const Size(80.0, 40.0)
       ),
       child: const Text("Kaydet"),
       onPressed: () {
-        _formKey.currentState!.save();
-        setJob();
-        //widget.students[widget.index]=studentYeni; CART CURT işlemler
-        Navigator.pop(context);
+        if (_formKey.currentState!.validate()) {
+          setState(() {
+            _isLoading=true;
+          });
+          _formKey.currentState!.save();
+          setJob();
+          Navigator.pop(context);
+        }
+        else{
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Lütfen boş alanları doldurunuz')),
+          );
+        }
       },
     );
   }
@@ -212,12 +258,19 @@ class _jobEdit extends State {
         setState(() {
           _isLoading = false;
         });
-        print(jsonData);
-      } else {// response.statusCode != 200
-        print("ResponseCode is not 200 !!!");
-        setState(() {
-          _isLoading = false;
-        });
+        if (jsonData['responseCode']==1) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Kayıt işlemi başarılı')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Hata kodu: ${jsonData['responseCode']}')),
+          );
+        }
+      } else {// responseStatus != 200
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('sistemsel hata Kod: 139')),
+        );
       }
     } catch (e) {
       print(e.toString());

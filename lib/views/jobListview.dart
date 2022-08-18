@@ -132,6 +132,7 @@ class _jobListViewState extends State {
   
   FutureOr onGoBackFunc(value) {
     setState(() {
+      _isLoading=true;
       getJobs(userID);
     });
   }

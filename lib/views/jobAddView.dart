@@ -90,6 +90,12 @@ class _jobAdd extends State {
       decoration: const InputDecoration(
         labelText: "Başlık",
       ),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: ((value) {
+        if (value == null || value.isEmpty) {
+          return "başlık değeri boş bırakılamaz";
+        }
+      }),
       onSaved: (newValue) {
         eklenecekJob.baslik=newValue;
       },
@@ -98,9 +104,17 @@ class _jobAdd extends State {
   
   buildDetayField() {
     return TextFormField(
+      keyboardType: TextInputType.multiline,
+      maxLines: null,
       decoration: const InputDecoration(
         labelText: "Detay",
       ),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: ((value) {
+        if (value == null || value.isEmpty) {
+          return "Detay değeri boş bırakılamaz";
+        }
+      }),
       onSaved: (newValue) {
         eklenecekJob.detay=newValue;
       },
@@ -112,8 +126,14 @@ class _jobAdd extends State {
       decoration: const InputDecoration(
         labelText: "Müsteri",
       ),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: ((value) {
+        if (value == null || value.isEmpty) {
+          return "Müşteri değeri boş bırakılamaz";
+        }
+      }),
       onSaved: (newValue) {
-        eklenecekJob.musteri=1; // DEĞİŞTİRİLECEK
+        eklenecekJob.musteri=int.parse(newValue.toString()); // DEĞİŞTİRİLECEK
       },
     );
   }
@@ -123,6 +143,12 @@ class _jobAdd extends State {
       decoration: const InputDecoration(
         labelText: "Harcanan Süre (dk)",
       ),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: ((value) {
+        if (value == null || value.isEmpty) { 
+          return "Harcanan süre değeri boş bırakılamaz";
+        }
+      }),
       onSaved: (newValue) {
         eklenecekJob.harcananSure=int.parse(newValue.toString());
       },
@@ -134,8 +160,14 @@ class _jobAdd extends State {
       decoration: const InputDecoration(
         labelText: "Durum",
       ),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: ((value) {
+        if (value == null || value.isEmpty) {
+          return "Durum değeri boş bırakılamaz";
+        }
+      }),
       onSaved: (newValue) {
-        eklenecekJob.durum=1; // DEĞİŞTİRİLECEK
+        eklenecekJob.durum=int.parse(newValue.toString()); // DEĞİŞTİRİLECEK
       },
     );
   }
@@ -145,8 +177,14 @@ class _jobAdd extends State {
       decoration: const InputDecoration(
         labelText: "Öncelik",
       ),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: ((value) {
+        if (value == null || value.isEmpty) {
+          return "Öncelik değeri boş bırakılamaz";
+        }
+      }),
       onSaved: (newValue) {
-        eklenecekJob.oncelik=1; // DEĞİŞTİRİLECEK
+        eklenecekJob.oncelik=int.parse(newValue.toString()); // DEĞİŞTİRİLECEK
       },
     );
   }
@@ -159,12 +197,19 @@ class _jobAdd extends State {
       ),
       child: const Text("Kaydet"),
       onPressed: () {
-        _formKey.currentState!.save();
-        setState(() {
-          _isLoading=true;
-        });
-        addJob(eklenecekJob);
-        Navigator.pop(context);
+        if (_formKey.currentState!.validate()) {
+          setState(() {
+            _isLoading=true;
+          });
+          _formKey.currentState!.save();
+          addJob(eklenecekJob);
+          Navigator.pop(context);
+        }
+        else{
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Lütfen boş alanları doldurunuz')),
+          );
+        }
       },
     );
   }
@@ -191,14 +236,23 @@ class _jobAdd extends State {
       );
       if (response.statusCode == 200) {
         jsonData = json.decode(response.body);
-        print(jsonData['responseCode']);
         if (jsonData['responseCode']==1) {
-          print("işlem başarılı");
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Kayıt işlemi başarılı')),
+          );
+        } else if(jsonData['responseCode']==303) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Bu iş zaten mevcut')),
+          );
         } else {
-          print("işlem başarısız.");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Hata kodu: ${jsonData['responseCode']}')),
+          );
         }
       } else {// responseStatus != 200
-        print("responseCode 200 dönmedi");
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('sistemsel hata Kod: 139')),
+          );
       }
     } catch (e) {
       print(e.toString());
