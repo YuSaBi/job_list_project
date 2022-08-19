@@ -37,9 +37,7 @@ class _jobListViewState extends State {
 
   void getJobs(int userID) async {
     var jsonData;
-    int kereDondu=0;
     while (true) {
-      kereDondu++;
       if (userID == 0) {
         try {
           sharedPreferences = await SharedPreferences.getInstance();
