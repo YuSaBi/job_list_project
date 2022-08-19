@@ -31,8 +31,21 @@ class _jobListViewState extends State {
     setState(() {
       _isLoading = true;
     });
+    getUIDfromLocal();
     getJobs(userID);
     super.initState();
+  }
+
+
+  void getUIDfromLocal()async{
+    try {
+      sharedPreferences = await SharedPreferences.getInstance();
+      userID=int.parse(sharedPreferences.getString('userID').toString());
+      print(userID);
+    } catch (e) {
+      print(e.toString());
+      print("Shared Preferences ile iligili hata var");
+    }
   }
 
   void getJobs(int userID) async{
@@ -48,6 +61,8 @@ class _jobListViewState extends State {
     }
     postMethodConfig config = postMethodConfig();
     try {
+      
+
       
       final response = await http.post(
       Uri.parse('${config.baseUrl}viewJobs'),
@@ -74,7 +89,7 @@ class _jobListViewState extends State {
       }
     } catch (e) {
       print(e.toString());
-      print("Post ile ilgili bir sorun var :(");
+      print("Post ile ilgili bir sorun var :( userID 0 gelmiş olabilir");
     }
     
     _isLoading=false;

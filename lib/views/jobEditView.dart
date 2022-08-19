@@ -258,13 +258,13 @@ class _jobEdit extends State {
         setState(() {
           _isLoading = false;
         });
-        if (jsonData['responseCode']==1) {
+        if (jsonData ==301) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Kayıt işlemi başarılı')),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Hata kodu: ${jsonData['responseCode']}')),
+            SnackBar(content: Text('Hata kodu: ${jsonData['responseCode'].toString()}')),
           );
         }
       } else {// responseStatus != 200
@@ -274,7 +274,7 @@ class _jobEdit extends State {
       }
     } catch (e) {
       print(e.toString());
-      print("Post ile ilgili bir sorun var :(");
+      print("Post ile ilgili bir sorun var :( jobeditView Line: 277");
     }
     
     _isLoading=false;

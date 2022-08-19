@@ -107,7 +107,7 @@ class _jobAdd extends State {
       keyboardType: TextInputType.multiline,
       maxLines: null,
       decoration: const InputDecoration(
-        labelText: "Detay",   
+        labelText: "Detay",
       ),
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: ((value) {
