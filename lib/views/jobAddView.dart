@@ -4,6 +4,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import '../models/httpConfig.dart';
 import 'package:job_list_project/models/jobRequestModel.dart';
@@ -27,6 +28,13 @@ class _jobAdd extends State {
   late SharedPreferences sharedPreferences;
   int userID =-1;
   //jobAdd({Key? key}) : super(key: key);
+
+  List<String> musteri = ["shell", "bp", "opet"];
+  String? musteriSelectedVal;
+  List<String> durum = ["yeni", "devam", "bitti"];
+  String? durumSelectedVal;
+  List<String> oncelik = ["düşük", "orta", "yüksek"]; // SUNUCUDAN ÇEKİLECEK
+  String? oncelikSelectedVal;
   
   @override
   void initState() {
@@ -69,9 +77,9 @@ class _jobAdd extends State {
               const SizedBox(height: 5.0,),
               buildDetayField(),
               const SizedBox(height: 5.0,),
-              buildCustomerIdField(),
-              const SizedBox(height: 5.0,),
               buildHarcanansureField(),
+              const SizedBox(height: 5.0,),
+              buildCustomerIdField(),
               const SizedBox(height: 5.0,),
               buildDurumField(),
               const SizedBox(height: 5.0,),
@@ -121,7 +129,48 @@ class _jobAdd extends State {
     );
   }
   
+  buildHarcanansureField() {
+    return TextFormField(
+      decoration: const InputDecoration(
+        labelText: "Harcanan Süre (dk)",
+      ),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      keyboardType: TextInputType.number,
+      inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+      validator: ((value) {
+        if (value == null || value.isEmpty) { 
+          return "Harcanan süre değeri boş bırakılamaz";
+        }
+        /*if (int.parse(value).runtimeType!=int) {
+          return "Harcanan süre yalnızca sayısal değer alabilir.";
+        }*/
+      }),
+      onSaved: (newValue) {
+        eklenecekJob.harcananSure=int.parse(newValue.toString());
+      },
+    );
+  }
+
   buildCustomerIdField() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text("Müşteri"),
+        DropdownButton<String>(
+          items: musteri.map(buildMusteriItem).toList(),
+          //onChanged: (value) => setState(() => this.musteriSelectedVal =value),
+          onChanged: (value) {
+            setState(() {
+              this.musteriSelectedVal = value;
+            });
+            eklenecekJob.musteri = musteri.indexOf(value.toString())+1;
+          },
+          value: musteriSelectedVal,
+          alignment: Alignment.centerRight,
+        ),
+      ],
+    );
+    /*
     return TextFormField(
       decoration: const InputDecoration(
         labelText: "Müsteri",
@@ -136,26 +185,36 @@ class _jobAdd extends State {
         eklenecekJob.musteri=int.parse(newValue.toString()); // DEĞİŞTİRİLECEK
       },
     );
+    */
   }
-  
-  buildHarcanansureField() {
-    return TextFormField(
-      decoration: const InputDecoration(
-        labelText: "Harcanan Süre (dk)",
-      ),
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      validator: ((value) {
-        if (value == null || value.isEmpty) { 
-          return "Harcanan süre değeri boş bırakılamaz";
-        }
-      }),
-      onSaved: (newValue) {
-        eklenecekJob.harcananSure=int.parse(newValue.toString());
-      },
-    );
-  }
+
+  DropdownMenuItem<String> buildMusteriItem(String item) => DropdownMenuItem(
+    value: item,
+    child: Text(
+      item,
+    ),
+  );
   
   buildDurumField() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text("Durum"),
+        DropdownButton<String>(
+          items: durum.map(buildDurumItem).toList(),
+          //onChanged: (value) => setState(() => this.musteriSelectedVal =value),
+          onChanged: (value) {
+            setState(() {
+              this.durumSelectedVal = value;
+            });
+            eklenecekJob.durum = durum.indexOf(value.toString())+1;
+          },
+          value: durumSelectedVal,
+          alignment: Alignment.centerRight,
+        ),
+      ],
+    );
+    /*
     return TextFormField(
       decoration: const InputDecoration(
         labelText: "Durum",
@@ -170,9 +229,36 @@ class _jobAdd extends State {
         eklenecekJob.durum=int.parse(newValue.toString()); // DEĞİŞTİRİLECEK
       },
     );
+    */
   }
+
+  DropdownMenuItem<String> buildDurumItem(String item) => DropdownMenuItem(
+        value: item,
+        child: Text(
+          item,
+        ),
+      );
   
   buildPriorityField() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text("Öncelik"),
+        DropdownButton<String>(
+          items: oncelik.map(buildOncelikItem).toList(),
+          //onChanged: (value) => setState(() => this.musteriSelectedVal =value),
+          onChanged: (value) {
+            setState(() {
+              this.oncelikSelectedVal = value;
+            });
+            eklenecekJob.oncelik = oncelik.indexOf(value.toString())+1;
+          },
+          value: oncelikSelectedVal,
+          alignment: Alignment.centerRight,
+        ),
+      ],
+    );
+    /*
     return TextFormField(
       decoration: const InputDecoration(
         labelText: "Öncelik",
@@ -187,7 +273,15 @@ class _jobAdd extends State {
         eklenecekJob.oncelik=int.parse(newValue.toString()); // DEĞİŞTİRİLECEK
       },
     );
+    */
   }
+  DropdownMenuItem<String> buildOncelikItem(String item) => DropdownMenuItem(
+        value: item,
+        child: Text(
+          item,
+          //style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      );
   
   buildSubmitButton() {
     return ElevatedButton(

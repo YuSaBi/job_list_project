@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
 
   // ilk hangi sayfadan başlayacağı burada belirtilecek
   starterPage(){
-
+    
   }
 
 }

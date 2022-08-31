@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:job_list_project/models/jobRequestModel.dart';
 import 'package:job_list_project/models/jobResponseModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,6 +31,7 @@ class _jobEdit extends State {
   String? durumSelectedVal;
   List<String> oncelik = ["düşük", "orta", "yüksek"]; // SUNUCUDAN ÇEKİLECEK
   String? oncelikSelectedVal;
+  
   bool ilkGirisMusteri = true;
   bool ilkGirisDurum = true;
   bool ilkGirisOncelik = true;
@@ -168,6 +170,8 @@ class _jobEdit extends State {
         labelText: "Harcanan Süre (dk)",
       ),
       autovalidateMode: AutovalidateMode.onUserInteraction,
+      keyboardType: TextInputType.number,
+      inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
       validator: ((value) {
         if (value == null || value.isEmpty) {
           return "Harcanan süre değeri boş bırakılamaz";
@@ -221,12 +225,12 @@ class _jobEdit extends State {
   }
 
   DropdownMenuItem<String> buildMusteriItem(String item) => DropdownMenuItem(
-        value: item,
-        child: Text(
-          item,
-          //style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      );
+    value: item,
+    child: Text(
+      item,
+      //style: TextStyle(fontWeight: FontWeight.bold),
+    ),
+  );
 
   buildDurumField() {
     return Row(

@@ -162,7 +162,7 @@ class _jobListViewState extends State {
                 )
               : Column(
                   children: [
-                    veriler == "empty"
+                    veriler == "empty" || veriler == null || veriler==[]
                         ? const Text(
                             "Henüz bu kullanıcıya ait bir job bulunmuyor")
                         : ListTile(
