@@ -283,6 +283,14 @@ class _jobAdd extends State {
         ),
       );
   
+  bool isDropDownValidate(){
+    bool validate = true;
+    if(musteriSelectedVal==null || durumSelectedVal==null || oncelikSelectedVal==null){
+      validate=false;
+    }
+    return validate;
+  }
+
   buildSubmitButton() {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
@@ -291,7 +299,7 @@ class _jobAdd extends State {
       ),
       child: const Text("Kaydet"),
       onPressed: () {
-        if (_formKey.currentState!.validate()) {
+        if (_formKey.currentState!.validate() && isDropDownValidate()) {
           setState(() {
             _isLoading=true;
           });

@@ -52,19 +52,35 @@ class _MainScreenState extends State<MainScreen> {
       appBar: AppBar(
         backgroundColor: Colors.teal.shade300,
         title: Text("Hoşgeldiniz"),
-        actions: <Widget>[
-          TextButton(
+        actions: [
+          PopupMenuButton<int>(
+            onSelected: (value) => popUpOnSelected(context, value),
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 0,
+                child: Text("Mail"),
+              )
+            ]
+          )
+          /*TextButton(
             onPressed: (){
-              //sharedPreferences.clear();
               sharedPreferences.setBool('isLogged', false);
               Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => loginScreen()), (Route<dynamic> route) => false);
             },
             child: Text("Çıkış yap",style: TextStyle(color: Colors.white),),
-          )
+          )*/
         ],
       ),
       body: Form(child: buildBody())
     );
+  }
+
+  void popUpOnSelected(BuildContext context, int item){
+    switch (item){
+      case 0:
+        sharedPreferences.setBool('isLogged', false);
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => loginScreen()), (Route<dynamic> route) => false);
+    }
   }
   
   buildBody() {
