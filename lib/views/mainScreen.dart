@@ -59,6 +59,11 @@ class _MainScreenState extends State<MainScreen> {
               const PopupMenuItem(
                 value: 0,
                 child: Text("Mail"),
+              ),
+              PopupMenuDivider(),
+              const PopupMenuItem(
+                value: 1,
+                child: Text("Çıkış"),
               )
             ]
           )
@@ -77,7 +82,7 @@ class _MainScreenState extends State<MainScreen> {
 
   void popUpOnSelected(BuildContext context, int item){
     switch (item){
-      case 0:
+      case 1:
         sharedPreferences.setBool('isLogged', false);
         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => loginScreen()), (Route<dynamic> route) => false);
     }
