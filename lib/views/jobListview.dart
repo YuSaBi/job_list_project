@@ -46,7 +46,7 @@ class _jobListViewState extends State {
         } catch (e) {
           print("hata: " + e.toString());
           print(
-              "Shared Preferences ile iligili hata var {void getJobs, Line:61}");
+              "Shared Preferences ile iligili hata var {void getJobs, Line:38 +-10}");
         }
       } else {
         try {
