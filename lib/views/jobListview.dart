@@ -79,8 +79,8 @@ class _jobListViewState extends State {
           print("Post ile ilgili bir sorun var :( userID 0 gelmiş olabilir");
         }
         break;
-      }
-    }
+      }// else sonu
+    }// while sonu
     setState(() {
       _isLoading = false;
     });

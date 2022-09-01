@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:job_list_project/views/jobAddView.dart';
 import 'package:job_list_project/views/loginScreen.dart';
+import 'package:job_list_project/views/mailView.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../views/jobListview.dart';
 
@@ -20,20 +21,35 @@ class MainScreen extends StatefulWidget{
 /// MAIN STATE ///
 class _MainScreenState extends State<MainScreen> {
   // shared preferences dan kullanıcı adı çekilecek
+  bool _isLoading = false;
   late SharedPreferences sharedPreferences;
+  String userName="";
   //late SharedPreferences sharedPreferences;
   //String userName;
 
   @override
   void initState() {
     super.initState();
+    _isLoading = true;
     getSharedPreferences();
     
     /*checkLoginStatus();*/
   }
 
   void getSharedPreferences() async{
-    sharedPreferences = await SharedPreferences.getInstance();
+    while (true){
+      if (userName.isEmpty || userName==""){
+        print("bi kere döndü");
+        sharedPreferences = await SharedPreferences.getInstance();
+        userName = sharedPreferences.getString("userName").toString();
+      }
+      else{
+        break;
+      }// else sonu
+    }// while sonu
+    setState(() {
+          _isLoading = false;
+        });
   }
 
   /*checkLoginStatus() async {
@@ -85,19 +101,29 @@ class _MainScreenState extends State<MainScreen> {
       case 1:
         sharedPreferences.setBool('isLogged', false);
         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => loginScreen()), (Route<dynamic> route) => false);
+        break;
+      case 0:
+        Navigator.push(context, MaterialPageRoute(builder: (context) => mailView(),));
+        break;
     }
   }
   
   buildBody() {
     /*print("shared pref üyesi = "+sharedPreferences.getString("userID").toString());*/
-    return Center(
+    return _isLoading
+    ? Center(
+      child:  CircularProgressIndicator(
+        backgroundColor:  Colors.grey.shade300,
+      ),
+    )
+    : Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // üst tarafa bişeyler eklersek.
-          const Padding(
+          Padding(
             padding: EdgeInsets.all(8.0),
-            child: Text("kullanıcı : (Kullanici_adi)"),
+            child: Text("kullanıcı : $userName"),
           ),
           _IsGirisBtn(),
           _IsListeleBtn(),

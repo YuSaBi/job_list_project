@@ -45,6 +45,9 @@ class _jobEdit extends State {
   void initState() {
     //getUserID();
     //getCustomer();
+    ilkGirisDurum=true;
+    ilkGirisMusteri=true;
+    ilkGirisOncelik=true;
     super.initState();
   }
 
@@ -205,23 +208,7 @@ class _jobEdit extends State {
         ),
       ],
     );
-    /*
-    return TextFormField(
-      decoration: const InputDecoration(
-        labelText: "Müsteri",
-      ),
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      validator: ((value) {
-        if (value == null || value.isEmpty) {
-          return "Müşteri değeri boş bırakılamaz";
-        }
-      }),
-      initialValue: selectedJob.musteri,
-      onSaved: (newValue) {
-        editedJob.musteri=int.parse(newValue.toString());
-      },
-    );
-    */
+  
   }
 
   DropdownMenuItem<String> buildMusteriItem(String item) => DropdownMenuItem(
@@ -364,9 +351,9 @@ class _jobEdit extends State {
           "baslik": editedJob.baslik,
           "harcananSure": editedJob.harcananSure,
           "detay": editedJob.detay,
-          "customerID": editedJob.musteri,
-          "durum": editedJob.durum,
-          "priorityID": editedJob.oncelik
+          "customerID": ilkGirisMusteri ? musteri.indexOf(selectedJob.musteri.toString())+1 : editedJob.musteri,// int.parse(selectedJob.musteri.toString())
+          "durum": ilkGirisDurum ? durum.indexOf(selectedJob.durum.toString())+1 : editedJob.durum,
+          "priorityID": ilkGirisOncelik ? oncelik.indexOf(selectedJob.oncelik.toString())+1 : editedJob.oncelik
         }),
       );
 

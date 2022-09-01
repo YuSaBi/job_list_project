@@ -36,6 +36,7 @@ class _mailViewState extends State{
         try {
           sharedPreferences = await SharedPreferences.getInstance();
           userID = int.parse(sharedPreferences.getString("userID").toString());
+          print(userID);
         } catch (e) {
           print("hata: "+ e.toString());
           print("shared pref ile ilgili hata var {void getMails, Line 30 +-10}");
@@ -47,16 +48,19 @@ class _mailViewState extends State{
         } catch (e) {
           
         }
-      }
-    }
-
+        break;
+      }// else sonu
+    }// while sonu
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Mail"),
+        title: const Text("Mesajlar"),
         backgroundColor: Colors.teal.shade300,
         centerTitle: true,
       ),
