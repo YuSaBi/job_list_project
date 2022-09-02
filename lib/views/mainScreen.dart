@@ -72,14 +72,26 @@ class _MainScreenState extends State<MainScreen> {
           PopupMenuButton<int>(
             onSelected: (value) => popUpOnSelected(context, value),
             itemBuilder: (context) => [
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 0,
-                child: Text("Mail"),
+                child: Row(
+                  children: const [
+                    Icon(Icons.email_outlined,color: Colors.black,),
+                    SizedBox(width: 8,),
+                    Text("Mail"),
+                  ],
+                ),
               ),
               PopupMenuDivider(),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 1,
-                child: Text("Çıkış"),
+                child: Row(
+                  children: const [
+                    Icon(Icons.logout,color: Colors.black,),
+                    SizedBox(width: 8,),
+                    Text("Çıkış"),
+                  ],
+                ),
               )
             ]
           )

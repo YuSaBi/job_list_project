@@ -33,7 +33,7 @@ class _mailViewState extends State{
 
     while (true) {
       if (userID == 0) {
-        try {
+        try {// local dosyalardan veri çekme işlemi
           sharedPreferences = await SharedPreferences.getInstance();
           userID = int.parse(sharedPreferences.getString("userID").toString());
           print(userID);
@@ -42,11 +42,13 @@ class _mailViewState extends State{
           print("shared pref ile ilgili hata var {void getMails, Line 30 +-10}");
         }
       } else {
-        try {
+        try {// Post işlemi
           postMethodConfig config = postMethodConfig();
           //final Response = await http.post()
+          veriler = "empty";
         } catch (e) {
-          
+          print(e.toString());
+          print("Post ile ilgili bir sorun var :( userID 0 gelmiş olabilir");
         }
         break;
       }// else sonu
@@ -60,7 +62,7 @@ class _mailViewState extends State{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Mesajlar"),
+        title: const Text("Mailler"),
         backgroundColor: Colors.teal.shade300,
         centerTitle: true,
       ),
@@ -88,7 +90,7 @@ class _mailViewState extends State{
   
   builderListView() {
     return RefreshIndicator(
-      onRefresh: refreshList(),
+      onRefresh: refreshList,
       child: ListView.builder(
         itemCount: veriler == "empty" ? 1 : veriler.length ,
         itemBuilder: (context, index) {
@@ -112,8 +114,8 @@ class _mailViewState extends State{
     );
   }
   
-  refreshList() {
-    return null;
+  Future<void> refreshList() async{
+    getMails(userID);
   }
 
 }
