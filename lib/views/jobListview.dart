@@ -52,7 +52,7 @@ class _jobListViewState extends State {
         try {
           postMethodConfig config = postMethodConfig();
           final response = await http.post(
-            Uri.parse('${config.baseUrl}viewJobs'),
+            Uri.parse('${config.baseUrl}listJobs'),
             headers: <String, String>{
               'Content-Type': 'application/json; charset=UTF-8',
             },
@@ -84,7 +84,7 @@ class _jobListViewState extends State {
     setState(() {
       _isLoading = false;
     });
-  }
+  }// getjobs sonu
 
   void delJob(int jobID) async {
     postMethodConfig config = postMethodConfig();
