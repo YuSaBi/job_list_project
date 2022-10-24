@@ -52,16 +52,6 @@ class _MainScreenState extends State<MainScreen> {
         });
   }
 
-  /*checkLoginStatus() async {
-    sharedPreferences = await SharedPreferences.getInstance();
-    if (sharedPreferences.getString("userID").toString()==null || sharedPreferences.getString("userID").toString()=="0") {// .toString() isteye bilir!!!!
-      //Navigator.push(context,MaterialPageRoute(builder: (context) => loginScreen()));
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => MainScreen()), (Route<dynamic> route) => false);
-    }
-  }*/
-
-  //_MainScreenState(this.userName);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,13 +85,6 @@ class _MainScreenState extends State<MainScreen> {
               )
             ]
           )
-          /*TextButton(
-            onPressed: (){
-              sharedPreferences.setBool('isLogged', false);
-              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => loginScreen()), (Route<dynamic> route) => false);
-            },
-            child: Text("Çıkış yap",style: TextStyle(color: Colors.white),),
-          )*/
         ],
       ),
       body: Form(child: buildBody())
@@ -121,7 +104,6 @@ class _MainScreenState extends State<MainScreen> {
   }
   
   buildBody() {
-    /*print("shared pref üyesi = "+sharedPreferences.getString("userID").toString());*/
     return _isLoading
     ? Center(
       child:  CircularProgressIndicator(
@@ -132,7 +114,7 @@ class _MainScreenState extends State<MainScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // üst tarafa bişeyler eklersek.
+          // Logo Eklenecek
           Padding(
             padding: EdgeInsets.all(8.0),
             child: Text("kullanıcı : $userName"),
@@ -169,7 +151,6 @@ class _MainScreenState extends State<MainScreen> {
       child: Text("İşleri listele"),
       onPressed: () {
         //return null;
-        //Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => loginScreen()), (Route<dynamic> route) => false);
         Navigator.push(context, MaterialPageRoute(builder: (context) => jobListView(),));
       },
     ),

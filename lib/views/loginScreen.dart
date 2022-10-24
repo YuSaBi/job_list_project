@@ -280,7 +280,7 @@ class _loginScreenState extends State<loginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                SizedBox(
+                const SizedBox(
                   height: 10.0,
                 ),
                 Row(

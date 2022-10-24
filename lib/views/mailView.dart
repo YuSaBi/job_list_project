@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:job_list_project/models/httpConfig.dart';
 import 'package:job_list_project/models/mailResponseModel.dart';
+import 'package:job_list_project/views/mailAddView.dart';
 import 'package:job_list_project/views/mailDetail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -51,7 +52,6 @@ class _mailViewState extends State {
 
   void getMails(int userID) async {
     var jsonData;
-
     while (true) {
       if (userID == 0) {
         try {
@@ -151,6 +151,7 @@ class _mailViewState extends State {
       fit: FlexFit.tight,
       flex: 3,
       child: ElevatedButton(
+        // ignore: sort_child_properties_last
         child: Row(
           children: const <Widget>[
             Icon(Icons.add),
@@ -161,8 +162,7 @@ class _mailViewState extends State {
           ],
         ),
         onPressed: () {
-          //yeni sayfaya gidilecek
-          null;
+          Navigator.push(context, MaterialPageRoute(builder: (context) => mailAdd(),));
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(Colors.teal),
